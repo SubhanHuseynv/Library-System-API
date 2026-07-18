@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibrarySystem.Application.Dtos
+namespace LibrarySystem.Application.Dtos.Authors
 {
     public record PostAuthorDto
     (

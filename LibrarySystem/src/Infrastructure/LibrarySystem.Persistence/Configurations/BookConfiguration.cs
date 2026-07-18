@@ -14,6 +14,7 @@ namespace LibrarySystem.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Book> builder)
         {
             builder.Property(b => b.Name).HasColumnType("nvarchar(256)");
+            builder.HasIndex(b => b.Name).IsUnique();
         }
     }
 }

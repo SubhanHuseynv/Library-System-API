@@ -1,4 +1,4 @@
-﻿using LibrarySystem.Application.Dtos.Authors;
+﻿using LibrarySystem.Application.Dtos.Books;
 using LibrarySystem.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,39 +7,40 @@ namespace LibrarySystem.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AuthorsController : ControllerBase
+    public class BooksController : ControllerBase
     {
-        IAuthorService _service;
-        public AuthorsController(IAuthorService service)
+        private readonly IBookService _service;
+        public BooksController(IBookService service)
         {
             _service = service;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _service.GetAllAuthors());
+            return Ok(await _service.GetAllBooks());
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id)
         {
-            return Ok(await _service.GetByIdAuthor(id));
+            return Ok(await _service.GetByIdBook(id));
         }
         [HttpPost]
-        public async Task<IActionResult> Create(PostAuthorDto authorDto)
+        public async Task<IActionResult> Create(PostBookDto bookDto)
         {
-            await _service.PostAuthor(authorDto);
+            await _service.PostBook(bookDto);
             return Created();
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, PutAuthorDto authorDto)
+        public async Task<IActionResult> Update(long id ,PutBookDto bookDto)
         {
-            await _service.PutAuthor(id, authorDto);
+            await _service.PutBook(id,bookDto);
             return NoContent();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            await _service.DeleteAuthor(id);
+            await _service.DeleteBook(id);
             return NoContent();
         }
     }

@@ -18,6 +18,9 @@ namespace LibrarySystem.Persistence
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IAuthorService, AuthorService>();
 
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IBookService, BookService>();
+
 
             return services;
         }

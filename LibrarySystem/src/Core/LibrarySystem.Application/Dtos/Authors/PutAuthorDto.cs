@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace LibrarySystem.Application.Dtos.Authors
 {
-    public record GetAllAuthorDto
+    public record PutAuthorDto
     (
-        long Id,
         string Name
         );
 }

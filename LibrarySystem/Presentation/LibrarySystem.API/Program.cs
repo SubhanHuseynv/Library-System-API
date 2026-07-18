@@ -1,8 +1,15 @@
+using LibrarySystem.Application;
+using LibrarySystem.Application.Interfaces.Repositories;
+using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Persistence;
+using LibrarySystem.Persistence.Context;
+using LibrarySystem.Persistence.Implementations.Repositories;
+using LibrarySystem.Persistence.Implementations.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddApplicationServices()
+    .AddPersistenceServices(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

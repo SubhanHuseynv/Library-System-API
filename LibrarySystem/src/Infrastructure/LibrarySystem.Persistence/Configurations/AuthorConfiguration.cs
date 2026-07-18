@@ -9,6 +9,7 @@ namespace LibrarySystem.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Author> builder)
         {
             builder.Property(a => a.Name).HasColumnType("nvarchar(150)");
+            builder.HasIndex(a => a.Name).IsUnique();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using LibrarySystem.Application.Dtos;
-using LibrarySystem.Application.Dtos.Authors;
+﻿using LibrarySystem.Application.Dtos.Authors;
 using LibrarySystem.Application.Dtos.Books;
 using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
@@ -24,7 +23,7 @@ namespace LibrarySystem.Persistence.Implementations.Services
         {
             IReadOnlyList<Author> authors = await _repository.GetAllAsync();
             return authors.Select(a => new GetAllAuthorDto(
-                id: a.Id,
+                Id: a.Id,
                 Name : a.Name)).ToList();
         }
 
@@ -34,7 +33,7 @@ namespace LibrarySystem.Persistence.Implementations.Services
             if (author is null) throw new Exception("Entity not found");
 
             return new GetByIdAuthorDto(
-                id: author.Id,
+                Id: author.Id,
                 Name: author.Name,
                 GetBook: author.Books.Select(b =>
                 new GetBookInAuthorDto(
@@ -47,6 +46,9 @@ namespace LibrarySystem.Persistence.Implementations.Services
 
         public async Task PostAuthor(PostAuthorDto authorDto)
         {
+            bool resultName = await _repository.AnyAsync(a => a.Name == authorDto.Name);
+            if (resultName) throw new Exception("Name already exists");
+
             _repository.Add(new Author
             {
                 Name = authorDto.Name,
@@ -59,6 +61,9 @@ namespace LibrarySystem.Persistence.Implementations.Services
         {
             Author? author = await _repository.GetByIdAsync(id);
             if (author is null) throw new Exception("Entity not found");
+
+            bool resultName = await _repository.AnyAsync(a => a.Name == authorDto.Name);
+            if (resultName) throw new Exception("Name already exists");
 
             author.Name = authorDto.Name;
             author.UpdatedAt = DateTime.UtcNow;

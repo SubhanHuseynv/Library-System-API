@@ -9,7 +9,7 @@ namespace LibrarySystem.Application.Dtos.Authors
 {
     public record GetByIdAuthorDto
     (
-        long id,
+        long Id,
         string Name,
         IReadOnlyList<GetBookInAuthorDto> GetBook
         );

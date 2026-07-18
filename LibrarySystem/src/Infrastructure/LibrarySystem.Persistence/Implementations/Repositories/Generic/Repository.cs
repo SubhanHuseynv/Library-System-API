@@ -2,12 +2,7 @@
 using LibrarySystem.Domain.Entities.common;
 using LibrarySystem.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibrarySystem.Persistence.Implementations.Repositories.Generic
 {
@@ -22,8 +17,25 @@ namespace LibrarySystem.Persistence.Implementations.Repositories.Generic
             _dbset = _context.Set<T>();
         }
         
-        public async Task<IReadOnlyList<T>> GetAllAsync()
+        public async Task<IReadOnlyList<T>> GetAllAsync(
+            Expression<Func<T,object>>? sort = null,
+            int page=0,
+            int take=0,
+            bool isDesc = false)
         {
+            IQueryable<T> query = _dbset.AsNoTracking();
+            if(sort is not null)
+            {
+                if (!isDesc) query.OrderBy(sort);
+                else query.OrderByDescending(sort);   
+            }
+
+            if (page > 0 && take > 0)
+            {
+                query = query.Skip((page - 1) * take);
+                query = query.Take(take);
+            }
+
             return await _dbset.ToListAsync();
         }
 
@@ -57,9 +69,9 @@ namespace LibrarySystem.Persistence.Implementations.Repositories.Generic
             await _context.SaveChangesAsync();
         }
 
-        public async Task AnyAsync(Expression<Func<T, bool>> func)
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> func)
         {
-            await _dbset.AnyAsync(func);
+            return await _dbset.AnyAsync(func);
         }
 
         private IQueryable<T> _getIncludes(IQueryable<T> query, params string[] includes)
