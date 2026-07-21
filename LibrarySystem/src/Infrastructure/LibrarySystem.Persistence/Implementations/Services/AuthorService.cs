@@ -3,6 +3,7 @@ using LibrarySystem.Application.Dtos.Books;
 using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
+using MovieAPI.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace LibrarySystem.Persistence.Implementations.Services
         public async Task<GetByIdAuthorDto> GetByIdAuthor(long id)
         {
             Author? author = await _repository.GetByIdAsync(id,nameof(Author.Books));
-            if (author is null) throw new Exception("Entity not found");
+            if (author is null) throw new NotFoundException("Entity not found");
 
             return new GetByIdAuthorDto(
                 Id: author.Id,
@@ -47,7 +48,7 @@ namespace LibrarySystem.Persistence.Implementations.Services
         public async Task PostAuthor(PostAuthorDto authorDto)
         {
             bool resultName = await _repository.AnyAsync(a => a.Name == authorDto.Name);
-            if (resultName) throw new Exception("Name already exists");
+            if (resultName) throw new ConflictException("Name already exists");
 
             _repository.Add(new Author
             {
@@ -60,10 +61,10 @@ namespace LibrarySystem.Persistence.Implementations.Services
         public async Task PutAuthor(long id, PutAuthorDto authorDto)
         {
             Author? author = await _repository.GetByIdAsync(id);
-            if (author is null) throw new Exception("Entity not found");
+            if (author is null) throw new NotFoundException("Entity not found");
 
             bool resultName = await _repository.AnyAsync(a => a.Name == authorDto.Name);
-            if (resultName) throw new Exception("Name already exists");
+            if (resultName) throw new ConflictException("Name already exists");
 
             author.Name = authorDto.Name;
             author.UpdatedAt = DateTime.UtcNow;
@@ -75,7 +76,7 @@ namespace LibrarySystem.Persistence.Implementations.Services
         public async Task DeleteAuthor(long id)
         {
             Author? author  = await _repository.GetByIdAsync(id);
-            if (author is null) throw new Exception("Entity not found");
+            if (author is null) throw new NotFoundException("Entity not found");
 
             _repository.Delete(author);
             await _repository.SaveChangesAsync();

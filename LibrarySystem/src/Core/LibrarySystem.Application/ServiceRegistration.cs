@@ -9,6 +9,9 @@ namespace LibrarySystem.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
             services.AddFluentValidationClientsideAdapters()
                 .AddFluentValidationAutoValidation()
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

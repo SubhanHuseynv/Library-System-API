@@ -1,9 +1,4 @@
 ﻿using LibrarySystem.Domain.Entities.common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibrarySystem.Domain.Entities
 {
@@ -12,6 +7,7 @@ namespace LibrarySystem.Domain.Entities
         public int TotalCount { get; set; }
         public string Description { get; set; }
         //RelatedProperties
+        public ICollection<BookMember> BookMembers { get; set; }
         public long AuthorId { get; set; }
         public Author Author { get; set; }
     }

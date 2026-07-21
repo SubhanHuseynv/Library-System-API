@@ -3,6 +3,6 @@ using LibrarySystem.Domain.Entities;
 
 namespace LibrarySystem.Application.Interfaces.Repositories;
 
-public interface IBookRepository : IRepository<Book>
+public interface IMemberRepository : IRepository<Member>
 {
 }
