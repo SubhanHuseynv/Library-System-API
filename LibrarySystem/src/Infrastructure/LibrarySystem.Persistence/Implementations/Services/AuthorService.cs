@@ -1,9 +1,10 @@
 ﻿using LibrarySystem.Application.Dtos.Authors;
 using LibrarySystem.Application.Dtos.Books;
+using LibrarySystem.Application.Exceptions;
 using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
-using MovieAPI.Application.Exceptions;
+using LibrarySystem.Application.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

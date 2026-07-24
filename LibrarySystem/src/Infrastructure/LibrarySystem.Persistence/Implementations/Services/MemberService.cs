@@ -4,7 +4,7 @@ using LibrarySystem.Application.Dtos.Members;
 using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
-using MovieAPI.Application.Exceptions;
+using LibrarySystem.Application.Exceptions;
 
 namespace LibrarySystem.Persistence.Implementations.Services
 {

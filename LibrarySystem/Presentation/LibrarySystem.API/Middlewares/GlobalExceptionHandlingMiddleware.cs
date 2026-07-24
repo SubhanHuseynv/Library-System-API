@@ -1,9 +1,9 @@
-﻿using MovieAPI.Application.Exceptions;
+﻿using LibrarySystem.Application.Exceptions;
 using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
 
-namespace MovieAPI.API.Middlewares
+namespace LibrarySystem.API.Middlewares
 {
     public class GlobalExceptionHandlingMiddleware
     {

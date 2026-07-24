@@ -3,8 +3,7 @@ using LibrarySystem.Application.Dtos.Books;
 using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
-using MovieAPI.Application.Exceptions;
+using LibrarySystem.Application.Exceptions;
 
 namespace LibrarySystem.Persistence.Implementations.Services;
 
@@ -20,6 +19,7 @@ internal class BookService : IBookService
 
     public async Task<IReadOnlyList<GetAllBookDto>> GetAllBooks()
     {
+        
         IReadOnlyList<Book> books = await _repository.GetAllAsync();
         return books.Select(b => new GetAllBookDto(
             Id:b.Id,
