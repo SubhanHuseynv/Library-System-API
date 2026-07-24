@@ -4,6 +4,9 @@ using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Application.Exceptions;
+using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
+using LibrarySystem.Application.Common;
 
 namespace LibrarySystem.Persistence.Implementations.Services;
 
@@ -17,12 +20,51 @@ internal class BookService : IBookService
         _authorRepository = authorRepository;
     }
 
-    public async Task<IReadOnlyList<GetAllBookDto>> GetAllBooks()
+    public async Task<IReadOnlyList<GetAllBookDto>> GetAllBooks(
+         string? filter,
+        int conSort,
+        int page,
+        int take
+        )
     {
-        
-        IReadOnlyList<Book> books = await _repository.GetAllAsync();
+        Expression<Func<Book, bool>>? chosenFilter = null;
+        if(filter is not null)
+        {
+            chosenFilter = i => i.Name.Contains(filter);
+        }
+
+        Expression<Func<Book, object>>? sort =  null;
+        bool isDesc =false;
+        if (conSort > 0)
+        {
+            switch (conSort)
+            {
+                case (int)ConSort.AscendingName:
+                    sort = i => i.CreatedAt;
+                    break;
+                case (int)ConSort.DescendingName:
+                    sort = i => i.CreatedAt;
+                    isDesc = true; 
+                    break;
+                case (int)ConSort.AscendingCreatedAt: 
+                    sort = i => i.CreatedAt;
+                    break;
+                case (int)ConSort.DescendingCreatedAt: 
+                    sort = i => i.CreatedAt;
+                    isDesc = true;
+                    break;
+                default:
+                    sort = i => i.CreatedAt;
+                    break;
+            }
+        }
+
+
+        IReadOnlyList<Book> books = await _repository.GetAllAsync(chosenFilter,
+           sort,page,take,isDesc
+            );
         return books.Select(b => new GetAllBookDto(
-            Id:b.Id,
+            Id: b.Id,
             Name: b.Name
             )).ToList();
     }
@@ -45,7 +87,7 @@ internal class BookService : IBookService
 
     public async Task PostBook(PostBookDto bookDto)
     {
-        bool resultName = await _repository.AnyAsync(b=>b.Name == bookDto.Name);
+        bool resultName = await _repository.AnyAsync(b => b.Name == bookDto.Name);
         if (resultName) throw new ConflictException("Name already exists");
 
         if (!await _authorRepository.AnyAsync(a => a.Id == bookDto.AuthorId))
