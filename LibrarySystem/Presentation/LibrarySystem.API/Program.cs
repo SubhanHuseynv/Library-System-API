@@ -12,7 +12,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services
             .AddApplicationServices()
-            .AddInfrastructureServices()
+            .AddInfrastructureServices(builder.Configuration)
             .AddPersistenceServices(builder.Configuration);
 
         builder.Services.AddControllers();
