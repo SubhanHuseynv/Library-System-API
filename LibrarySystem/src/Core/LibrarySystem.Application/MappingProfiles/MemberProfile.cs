@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LibrarySystem.Application.Dtos;
 using LibrarySystem.Application.Dtos.Books;
 using LibrarySystem.Application.Dtos.Members;
 using LibrarySystem.Domain.Entities;

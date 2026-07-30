@@ -1,5 +1,4 @@
-﻿using LibrarySystem.Application.Dtos;
-using LibrarySystem.Application.Dtos.Members;
+﻿using LibrarySystem.Application.Dtos.Members;
 using System;
 using System.Collections.Generic;
 using System.Linq;
