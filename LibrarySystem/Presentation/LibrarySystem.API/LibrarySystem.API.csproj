@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Infrastructure\LibrarySystem.Infrastructure\LibrarySystem.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\LibrarySystem.Persistence\LibrarySystem.Persistence.csproj" />
   </ItemGroup>
 
