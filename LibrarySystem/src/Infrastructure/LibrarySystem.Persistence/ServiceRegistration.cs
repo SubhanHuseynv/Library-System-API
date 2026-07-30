@@ -1,30 +1,51 @@
 ﻿using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
+using LibrarySystem.Domain.Entities;
 using LibrarySystem.Persistence.Context;
 using LibrarySystem.Persistence.Implementations.Repositories;
 using LibrarySystem.Persistence.Implementations.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LibrarySystem.Persistence
+namespace LibrarySystem.Persistence;
+
+public static class ServiceRegistration
 {
-    public static class ServiceRegistration
+    public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("default")));
+        services.AddIdentity<AppUser, IdentityRole>(opt =>
         {
-            services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("default")));
+            opt.Password.RequireNonAlphanumeric = false;
+        }).AddDefaultTokenProviders().AddEntityFrameworkStores<AppDbContext>();
 
-            services.AddScoped<IAuthorRepository, AuthorRepository>();
-            services.AddScoped<IAuthorService, AuthorService>();
 
-            services.AddScoped<IBookRepository, BookRepository>();
-            services.AddScoped<IBookService, BookService>();
+        services.AddScoped<IAuthorRepository, AuthorRepository>();
+        services.AddScoped<IAuthorService, AuthorService>();
 
-            services.AddScoped<IMemberRepository, MemberRepository>();
-            services.AddScoped<IMemberService, MemberService>();
+        services.AddScoped<IBookRepository, BookRepository>();
+        services.AddScoped<IBookService, BookService>();
 
-            return services;
-        }
+        services.AddScoped<IMemberRepository, MemberRepository>();
+        services.AddScoped<IMemberService, MemberService>();
+
+        services.AddScoped<AppDbContextInitializer>();
+
+        services.AddScoped<IAccountService, AccountService>();
+
+        return services;
+    }
+
+    public static async Task<IApplicationBuilder> UseInitializeDbContext(this IApplicationBuilder app, IServiceScope scope)
+    {
+        var initialize = scope.ServiceProvider.GetRequiredService<AppDbContextInitializer>();
+        await initialize.InitializeDb();
+        await initialize.InitializeRoles();
+        await initialize.InitializeAdmin();
+
+        return app;
     }
 }
