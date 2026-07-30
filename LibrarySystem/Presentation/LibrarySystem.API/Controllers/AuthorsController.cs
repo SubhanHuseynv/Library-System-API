@@ -1,5 +1,7 @@
 ﻿using LibrarySystem.Application.Dtos.Authors;
 using LibrarySystem.Application.Interfaces.Services;
+using LibrarySystem.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,18 +26,21 @@ namespace LibrarySystem.API.Controllers
         {
             return Ok(await _service.GetByIdAuthor(id));
         }
+        [Authorize(Roles =nameof(UserRole.Admin))]
         [HttpPost]
         public async Task<IActionResult> Create(PostAuthorDto authorDto)
         {
             await _service.PostAuthor(authorDto);
             return Created();
         }
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, PutAuthorDto authorDto)
         {
             await _service.PutAuthor(id, authorDto);
             return NoContent();
         }
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {

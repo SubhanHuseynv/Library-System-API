@@ -1,5 +1,7 @@
 ﻿using LibrarySystem.Application.Dtos.Books;
 using LibrarySystem.Application.Interfaces.Services;
+using LibrarySystem.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibrarySystem.API.Controllers;
@@ -24,18 +26,21 @@ public class BooksController : ControllerBase
     {
         return Ok(await _service.GetByIdBook(id));
     }
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [HttpPost]
     public async Task<IActionResult> Create(PostBookDto bookDto)
     {
         await _service.PostBook(bookDto);
         return Created();
     }
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(long id ,PutBookDto bookDto)
     {
         await _service.PutBook(id,bookDto);
         return NoContent();
     }
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {

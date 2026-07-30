@@ -1,12 +1,14 @@
-﻿using LibrarySystem.Application.Dtos;
-using LibrarySystem.Application.Dtos.Members;
+﻿using LibrarySystem.Application.Dtos.Members;
 using LibrarySystem.Application.Interfaces.Services;
+using LibrarySystem.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibrarySystem.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[Authorize(Roles = "Admin,Librarian")]
 public class MembersController : ControllerBase
 {
     private readonly IMemberService _service;
