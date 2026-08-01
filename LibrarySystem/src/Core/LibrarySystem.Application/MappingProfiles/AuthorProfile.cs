@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LibrarySystem.Application.Dtos.Books;
+using LibrarySystem.Application.Dtos.Authors;
 using LibrarySystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace LibrarySystem.Application.MappingProfiles
 {
-    internal class BookProfile : Profile
+    public class AuthorProfile : Profile
     {
-        public BookProfile()
+        public AuthorProfile()
         {
-            CreateMap<Book, GetBookInMemberDto>();
-            CreateMap<Book, GetBookInAuthorDto>();
+            CreateMap<Author, GetAllAuthorDto>().ReverseMap();
+            CreateMap<Author,GetByIdAuthorDto>().ReverseMap();
         }
     }
 }
