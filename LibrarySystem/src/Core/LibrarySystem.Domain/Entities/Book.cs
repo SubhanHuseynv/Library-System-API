@@ -8,6 +8,7 @@ namespace LibrarySystem.Domain.Entities
         public string Description { get; set; }
         //RelatedProperties
         public ICollection<BookMember> BookMembers { get; set; }
+        public ICollection<BookCategory> BookCategories { get; set; }
         public long AuthorId { get; set; }
         public Author Author { get; set; }
     }
