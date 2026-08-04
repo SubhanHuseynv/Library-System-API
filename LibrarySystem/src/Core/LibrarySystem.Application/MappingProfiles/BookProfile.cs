@@ -15,6 +15,9 @@ namespace LibrarySystem.Application.MappingProfiles
         {
             CreateMap<Book, GetBookInMemberDto>();
             CreateMap<Book, GetBookInAuthorDto>();
+
+            CreateMap<Book, GetBookInCategoryDto>();
+                
         }
     }
 }

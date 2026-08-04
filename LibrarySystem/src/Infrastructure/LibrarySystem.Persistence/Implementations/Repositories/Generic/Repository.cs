@@ -22,7 +22,8 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity, new()
         Expression<Func<T, object>>? sort = null,
         int page = 0,
         int take = 0,
-        bool isDesc = false)
+        bool isDesc = false,
+        params string[] includes)
     {
         IQueryable<T> query = _dbset.AsNoTracking();
 
@@ -41,6 +42,11 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity, new()
         {
             query = query.Skip((page - 1) * take);
             query = query.Take(take);
+        }
+
+        if( includes.Any())
+        {
+            query = _getIncludes(query, includes);
         }
 
         return await query.ToListAsync();

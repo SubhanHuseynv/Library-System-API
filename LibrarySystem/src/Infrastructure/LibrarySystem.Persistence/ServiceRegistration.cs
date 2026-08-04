@@ -36,6 +36,9 @@ public static class ServiceRegistration
 
         services.AddScoped<IAccountService, AccountService>();
 
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<ICategoryService, CategoryService>();
+
         return services;
     }
 

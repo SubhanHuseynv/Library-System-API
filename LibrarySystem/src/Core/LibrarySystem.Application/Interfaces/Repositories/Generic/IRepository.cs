@@ -9,7 +9,8 @@ public interface IRepository<T>
         Expression<Func<T, object>>? sort = null,
         int page = 0,
         int take = 0,
-        bool isDesc = false);
+        bool isDesc = false,
+        params string[] includes);
     Task<T?> GetByIdAsync(long id, params string[] includes);
     void Add(T entity);
     void Update(T entity);
