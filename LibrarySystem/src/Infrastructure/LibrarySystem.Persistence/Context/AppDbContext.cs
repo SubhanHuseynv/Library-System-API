@@ -41,4 +41,6 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<BookMember> BookMembers { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<BookCategory> BookCategories { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
 }

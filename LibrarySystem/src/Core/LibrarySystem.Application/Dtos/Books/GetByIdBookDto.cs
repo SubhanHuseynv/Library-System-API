@@ -1,4 +1,5 @@
 ﻿using LibrarySystem.Application.Dtos.Authors;
+using LibrarySystem.Application.Dtos.Categories;
 
 namespace LibrarySystem.Application.Dtos.Books;
 
@@ -8,5 +9,6 @@ public record GetByIdBookDto
     string Name,
     string Description,
     int TotalCount,
-    GetAuthorInBookDto GetAuthor
+    GetAuthorInBookDto GetAuthor,
+    ICollection<GetCategoryInBookDto> GetCategories
     );

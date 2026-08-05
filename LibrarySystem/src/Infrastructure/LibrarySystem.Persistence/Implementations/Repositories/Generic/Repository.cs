@@ -91,7 +91,7 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity, new()
     {
         foreach (var include in includes)
         {
-            query = _dbset.Include(include);
+            query = query.Include(include);
         }
         return query;
     }

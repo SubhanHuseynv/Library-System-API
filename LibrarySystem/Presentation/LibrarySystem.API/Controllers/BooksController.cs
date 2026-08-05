@@ -17,30 +17,30 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] string? filter, int conSort, int page, int take )
+    public async Task<IActionResult> GetAll([FromQuery] string? filter, int conSort, int page, int take)
     {
-        return Ok(await _service.GetAllBooks(filter,conSort, page, take));
+        return Ok(await _service.GetAllBooks(filter, conSort, page, take));
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
         return Ok(await _service.GetByIdBook(id));
     }
-    [Authorize(Roles = nameof(UserRole.Admin))]
+    //[Authorize(Roles = nameof(UserRole.Admin))]
     [HttpPost]
     public async Task<IActionResult> Create(PostBookDto bookDto)
     {
         await _service.PostBook(bookDto);
         return Created();
     }
-    [Authorize(Roles = nameof(UserRole.Admin))]
+    //[Authorize]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(long id ,PutBookDto bookDto)
+    public async Task<IActionResult> Update(long id, PutBookDto bookDto)
     {
-        await _service.PutBook(id,bookDto);
+        await _service.PutBook(id, bookDto);
         return NoContent();
     }
-    [Authorize(Roles = nameof(UserRole.Admin))]
+    //[Authorize(Roles = nameof(UserRole.Admin))]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {

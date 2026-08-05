@@ -27,9 +27,9 @@ namespace LibrarySystem.Infrastructure
                    ValidateIssuerSigningKey = true,
 
 
-                   ValidIssuer = configuration["JWT:issuer"],
-                   ValidAudience = configuration["JWT:audience"],
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:secretKey"])),
+                   ValidIssuer = configuration["JWT:Issuer"],
+                   ValidAudience = configuration["JWT:Audience"],
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:SecurityKey"])),
                    LifetimeValidator = (_, exp, token, _) => token != null && exp != null ? exp > DateTime.UtcNow : false
 
                });

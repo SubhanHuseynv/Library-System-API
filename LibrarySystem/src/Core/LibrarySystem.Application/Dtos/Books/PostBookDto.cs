@@ -5,5 +5,6 @@ public record PostBookDto
     string Name,
     string Description,
     int TotalCount,
-    long AuthorId
+    long AuthorId,
+    ICollection<long> CategoryIds
     );

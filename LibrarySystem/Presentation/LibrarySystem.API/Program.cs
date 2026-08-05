@@ -3,10 +3,10 @@ using LibrarySystem.Application;
 using LibrarySystem.Infrastructure;
 using LibrarySystem.Persistence;
 using Microsoft.OpenApi.Models;
-using System.Threading.Tasks;
 
 internal class Program
 {
+
     private static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -58,14 +58,16 @@ internal class Program
 
         using (var scope = app.Services.CreateScope())
         {
-           await app.UseInitializeDbContext(scope);
+            await app.UseInitializeDbContext(scope);
         }
 
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
+
 
         app.MapControllers();
 
