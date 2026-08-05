@@ -4,6 +4,7 @@ using LibrarySystem.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibrarySystem.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260805181605_mig6")]
+    partial class mig6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,33 +246,6 @@ namespace LibrarySystem.Persistence.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("LibrarySystem.Domain.Entities.Customer", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customer");
-                });
-
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Member", b =>
                 {
                     b.Property<long>("Id")
@@ -310,9 +286,6 @@ namespace LibrarySystem.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("CustomerId")
-                        .HasColumnType("bigint");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -323,8 +296,6 @@ namespace LibrarySystem.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -549,17 +520,6 @@ namespace LibrarySystem.Persistence.Migrations
                     b.Navigation("Member");
                 });
 
-            modelBuilder.Entity("LibrarySystem.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("LibrarySystem.Domain.Entities.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("LibrarySystem.Domain.Entities.OrderItem", b =>
                 {
                     b.HasOne("LibrarySystem.Domain.Entities.Book", "Book")
@@ -647,11 +607,6 @@ namespace LibrarySystem.Persistence.Migrations
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Category", b =>
                 {
                     b.Navigation("BookCategories");
-                });
-
-            modelBuilder.Entity("LibrarySystem.Domain.Entities.Customer", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Member", b =>
