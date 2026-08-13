@@ -1,7 +1,10 @@
-﻿namespace LibrarySystem.Application.Dtos.OrderItems;
+﻿using LibrarySystem.Domain.Entities;
+
+namespace LibrarySystem.Application.Dtos.OrderItems;
 
 public record PostOrderItemDto
 (
-    int BookId,
+    long BookId,
+    long OrderId,
     int Quantity
     );

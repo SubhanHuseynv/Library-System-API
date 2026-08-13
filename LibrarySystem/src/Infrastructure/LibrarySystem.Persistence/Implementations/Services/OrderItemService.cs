@@ -10,30 +10,33 @@ internal class OrderItemService : IOrderItemService
 {
     private readonly IOrderItemRepository _repository;
     private readonly IBookRepository _bookRepository;
-    public OrderItemService(IOrderItemRepository repository, IBookRepository bookRepository)
+    private readonly IOrderRepository _orderRepository;
+    public OrderItemService(IOrderItemRepository repository, IBookRepository bookRepository, IOrderRepository orderRepository)
     {
         _repository = repository;
         _bookRepository = bookRepository;
+        _orderRepository = orderRepository;
     }
 
-    public async Task<GetByIdOrderItemDto> GetByIdAsync(long id)
+    public async Task<GetByIdOrderItemDTo> GetByIdAsync(long id)
     {
-        var orderItem = await _repository.GetByIdAsync(id, nameof(OrderItem.Book));
-        if (orderItem is null) throw new NotFoundException("Entity not found");
-
-        return new GetByIdOrderItemDto(
+        OrderItem? orderItem = await _repository.GetByIdAsync(id, includes: nameof(orderItem.Book));
+        if (orderItem is null) throw new NotFoundException("Order item not found");
+        return new GetByIdOrderItemDTo(
             Id: orderItem.Id,
-            BookName: orderItem.Book.Name,
             Quantity: orderItem.Quantity,
-            Price: orderItem.Book.Price,
-            UnitPrice: orderItem.UnitPrice
-        );
+            BookName: orderItem.Book.Name,
+            UnitPrice: orderItem.Quantity * orderItem.Book.Price
+            );
     }
 
     public async Task PostAsync(PostOrderItemDto orderItemDto)
     {
         Book? book = await _bookRepository.GetByIdAsync(orderItemDto.BookId);
         if (book is null) throw new NotFoundException("BookId not found");
+
+        Order? order = await _orderRepository.GetByIdAsync(orderItemDto.OrderId);
+        if(order is null) throw new NotFoundException("OrderId not found");
 
         if (book.Stock < orderItemDto.Quantity)
             throw new ConflictException($"Requested quantity ({orderItemDto.Quantity}) exceeds available stock ({book.Stock}).");
@@ -42,6 +45,7 @@ internal class OrderItemService : IOrderItemService
         {
             Quantity = orderItemDto.Quantity,
             BookId = orderItemDto.BookId,
+            OrderId = orderItemDto.OrderId,
             UnitPrice = book.Price * orderItemDto.Quantity
         });
         book.Stock = book.Stock - orderItemDto.Quantity;
@@ -64,6 +68,9 @@ internal class OrderItemService : IOrderItemService
         orderItem.Quantity = orderItemDto.Quantity;
         orderItem.BookId = orderItemDto.BookId;
         orderItem.UnitPrice = orderItemDto.Quantity * book.Price;
+
+        book.Stock = book.Stock - orderItemDto.Quantity;
+        _bookRepository.Update(book);
 
         _repository.Update(orderItem);
         await _repository.SaveChangesAsync();

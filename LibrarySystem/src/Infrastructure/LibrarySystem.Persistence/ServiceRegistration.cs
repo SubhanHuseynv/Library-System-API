@@ -43,6 +43,9 @@ public static class ServiceRegistration
         services.AddScoped<IOrderItemService, OrderItemService>();
 
 
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOrderService, OrderService>();
+
         return services;
     }
 
