@@ -1,5 +1,6 @@
 ﻿using LibrarySystem.Application.Dtos.Books;
 using LibrarySystem.Application.Interfaces.Services;
+using LibrarySystem.Application.Queries;
 using LibrarySystem.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,9 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] string? filter, int conSort, int page, int take)
+    public async Task<IActionResult> GetAll([FromQuery] GetAllBookQuery query)
     {
-        return Ok(await _service.GetAllBooks(filter, conSort, page, take));
+        return Ok(await _service.GetAllBooks(query));
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)

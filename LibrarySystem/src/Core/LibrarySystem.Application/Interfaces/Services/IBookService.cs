@@ -1,14 +1,12 @@
 ﻿using LibrarySystem.Application.Dtos.Books;
+using LibrarySystem.Application.Queries;
 
 namespace LibrarySystem.Application.Interfaces.Services;
 
 public interface IBookService
 {
     Task<IReadOnlyList<GetAllBookDto>> GetAllBooks(
-        string? filter,
-        int conSort,
-        int page,
-        int take
+        GetAllBookQuery query
         );
     Task<GetByIdBookDto> GetByIdBook(long id);
     Task PostBook(PostBookDto bookDto);

@@ -7,6 +7,7 @@ using LibrarySystem.Application.Exceptions;
 using System.Linq.Expressions;
 using LibrarySystem.Application.Common;
 using LibrarySystem.Application.Dtos.Categories;
+using LibrarySystem.Application.Queries;
 
 namespace LibrarySystem.Persistence.Implementations.Services;
 
@@ -25,23 +26,28 @@ internal class BookService : IBookService
     }
 
     public async Task<IReadOnlyList<GetAllBookDto>> GetAllBooks(
-         string? filter,
-        int conSort,
-        int page,
-        int take
+         GetAllBookQuery query
         )
     {
-        Expression<Func<Book, bool>>? chosenFilter = null;
-        if (filter is not null)
+        List<Expression<Func<Book, bool>>>? chosenFilter = new();
+        if (query.Filter is not null)
         {
-            chosenFilter = i => i.Name.Contains(filter);
+            chosenFilter.Add(i => i.Name.Contains(query.Filter));
+        }
+        if(query.MinPrice > 0)
+        {
+            chosenFilter.Add(i => i.Price >= query.MinPrice);
+        }
+        if (query.MaxPrice > 0)
+        {
+            chosenFilter.Add(i => i.Price <= query.MaxPrice);
         }
 
         Expression<Func<Book, object>>? sort = null;
         bool isDesc = false;
-        if (conSort > 0)
+        if (query.ConSort > 0)
         {
-            switch (conSort)
+            switch (query.ConSort)
             {
                 case (int)ConSort.AscendingName:
                     sort = i => i.CreatedAt;
@@ -65,7 +71,7 @@ internal class BookService : IBookService
 
 
         IReadOnlyList<Book> books = await _repository.GetAllAsync(chosenFilter,
-           sort, page, take, isDesc
+           sort, query.Page, query.Take, isDesc
             );
         return books.Select(b => new GetAllBookDto(
             Id: b.Id,
@@ -108,7 +114,11 @@ internal class BookService : IBookService
             throw new NotFoundException("Author not found");
 
         var distinctCategoryIds = bookDto.CategoryIds.Distinct().ToList();
-        var existedCIds = await _categoryRepository.GetAllAsync(filter: b => b.BookCategories.Any(bc => distinctCategoryIds.Contains(bc.CategoryId)));
+        List<Expression<Func<Category, bool>>>? filters = new()
+        {
+            b => b.BookCategories.Any(bc => distinctCategoryIds.Contains(bc.CategoryId))
+        };
+        var existedCIds = await _categoryRepository.GetAllAsync(filters: filters);
         if (existedCIds.Count != distinctCategoryIds.Count) throw new NotFoundException("CategoryIds not found");
 
         _repository.Add(
@@ -141,7 +151,11 @@ internal class BookService : IBookService
             throw new NotFoundException("Author not found");
 
         var distinctCategoryIds = bookDto.CategoryIds.Distinct().ToList();
-        var existedCIds = await _categoryRepository.GetAllAsync(filter: b => b.BookCategories.Any(bc => distinctCategoryIds.Contains(bc.CategoryId)));
+        List<Expression<Func<Category, bool>>>? filters = new()
+        {
+            b => b.BookCategories.Any(bc => distinctCategoryIds.Contains(bc.CategoryId))
+        };
+        var existedCIds = await _categoryRepository.GetAllAsync(filters: filters);
         if(existedCIds.Count != distinctCategoryIds.Count) throw new NotFoundException("CategoryIds not found");
 
 
