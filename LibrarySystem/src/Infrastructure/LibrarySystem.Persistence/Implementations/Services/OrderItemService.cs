@@ -26,7 +26,7 @@ internal class OrderItemService : IOrderItemService
             Id: orderItem.Id,
             Quantity: orderItem.Quantity,
             BookName: orderItem.Book.Name,
-            UnitPrice: orderItem.Quantity * orderItem.Book.Price
+            UnitPrice: orderItem.UnitPrice
             );
     }
 
@@ -51,6 +51,9 @@ internal class OrderItemService : IOrderItemService
         book.Stock = book.Stock - orderItemDto.Quantity;
         _bookRepository.Update(book);
 
+        order.TotalPrice += book.Price * orderItemDto.Quantity;
+        _orderRepository.Update(order);
+
         await _repository.SaveChangesAsync();
     }
 
@@ -59,18 +62,20 @@ internal class OrderItemService : IOrderItemService
         OrderItem? orderItem = await _repository.GetByIdAsync(id);
         if (orderItem is null) throw new Exception("OrderItem not found");
 
-        Book? book = await _bookRepository.GetByIdAsync(orderItemDto.BookId);
-        if (book is null) throw new NotFoundException("BookId not found");
+        Book? book = await _bookRepository.GetByIdAsync(orderItem.BookId);
+        Order? order = await _orderRepository.GetByIdAsync(orderItem.OrderId);
 
-        if (book.Stock < orderItemDto.Quantity)
+        if (book.Stock + orderItem.Quantity < orderItemDto.Quantity)
             throw new ConflictException($"Requested quantity ({orderItemDto.Quantity}) exceeds available stock ({book.Stock}).");
 
-        orderItem.Quantity = orderItemDto.Quantity;
-        orderItem.BookId = orderItemDto.BookId;
-        orderItem.UnitPrice = orderItemDto.Quantity * book.Price;
-
-        book.Stock = book.Stock - orderItemDto.Quantity;
+        book.Stock = (book.Stock + orderItem.Quantity) - orderItemDto.Quantity;
         _bookRepository.Update(book);
+
+       order.TotalPrice = (order.TotalPrice - orderItem.UnitPrice) + orderItemDto.Quantity * book.Price;
+        _orderRepository.Update(order);
+
+        orderItem.Quantity = orderItemDto.Quantity;
+        orderItem.UnitPrice = orderItemDto.Quantity * book.Price;
 
         _repository.Update(orderItem);
         await _repository.SaveChangesAsync();

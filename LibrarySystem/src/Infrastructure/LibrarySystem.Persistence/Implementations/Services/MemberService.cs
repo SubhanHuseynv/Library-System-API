@@ -4,6 +4,7 @@ using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Application.Exceptions;
+using System.Linq.Expressions;
 
 namespace LibrarySystem.Persistence.Implementations.Services
 {
@@ -42,7 +43,7 @@ namespace LibrarySystem.Persistence.Implementations.Services
             bool resultName = await _repository.AnyAsync(m => m.Name == memberDto.Name);
             if (resultName) throw new ConflictException("Name already exists");
 
-            IReadOnlyList<Book> existingBooks = await _bookRepository.GetAllAsync(filter: s => memberDto.BookIds.Contains(s.Id));
+            IReadOnlyList<Book> existingBooks = await _bookRepository.GetAllAsync(filters: new List<Expression<Func<Book, bool>>>(){ s => memberDto.BookIds.Contains(s.Id) });
             if (existingBooks.Count != memberDto.BookIds.Count)
                 throw new NotFoundException("BookIds does not exists");
 
@@ -58,7 +59,7 @@ namespace LibrarySystem.Persistence.Implementations.Services
             bool resultName = await _repository.AnyAsync(m => m.Name == memberDto.Name && m.Id != id);
             if (resultName) throw new ConflictException("Name already exists");
 
-            IReadOnlyList<Book> existingBooks = await _bookRepository.GetAllAsync(filter: s => memberDto.BookIds.Contains(s.Id));
+            IReadOnlyList<Book> existingBooks = await _bookRepository.GetAllAsync(filters: new List<Expression<Func<Book, bool>>>() { s => memberDto.BookIds.Contains(s.Id) });
             if (existingBooks.Count != memberDto.BookIds.Count)
                 throw new NotFoundException("BookIds does not exists");
 

@@ -4,5 +4,7 @@ public record GetAllOrderDto
     (
     long Id,
     int TotalBookCount,
-    decimal TotalPrice
+    decimal TotalPrice,
+    DateTime CreatedAt,
+    string CustomerName
     );

@@ -5,6 +5,7 @@ using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Application.Queries;
 using LibrarySystem.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace LibrarySystem.Persistence.Implementations.Services;
 
@@ -20,9 +21,20 @@ internal class OrderService : IOrderService
 
     public async Task<IReadOnlyList<GetAllOrderDto>> GetAllAsync(GetAllOrderQuery query)
     {
+        List<Expression<Func<Order, bool>>>? filter = new();
+        if(query.CustomerId > 0)
+        {
+            filter.Add( o => o.CustomerId == query.CustomerId);
+        }
 
-        var orders = await _repository.GetAllAsync(includes: $"{nameof(Order.OrderItems)}.{nameof(OrderItem.Book)}",
-            filter: o => o.CustomerId == query.CustomerId);
+        if(query.StartDate is not null && query.EndDate is not null)
+        {
+            filter.Add(o => o.CreatedAt >= query.StartDate && o.CreatedAt <= query.EndDate);
+        }
+
+
+        var orders = await _repository.GetAllAsync(includes: [nameof(Order.Customer), nameof(Order.OrderItems)],
+            filters: filter);
 
 
 
@@ -30,13 +42,16 @@ internal class OrderService : IOrderService
             o =>new GetAllOrderDto(
                 Id : o.Id,
                 TotalBookCount: o.OrderItems.Sum(oi => oi.Quantity),
-                TotalPrice: o.TotalPrice
+                TotalPrice: o.TotalPrice,
+                CreatedAt: o.CreatedAt,
+                CustomerName: o.Customer.Name
             )).ToList();
     }
 
     public async Task<GetByIdOrderDto> GetByIdAsync(long id)
     {
-        var order = await _repository.GetByIdAsync(id);
+        var order = await _repository.GetByIdAsync(id,
+            includes: [nameof(Order.Customer),"OrderItems.Book"]);
         if (order == null) throw new NotFoundException("Order not found");
 
 
@@ -51,7 +66,7 @@ internal class OrderService : IOrderService
                 Quantity: oi.Quantity,
                 BookName: oi.Book.Name,
                 Price: oi.Book.Price,
-                UnitPrice: oi.Quantity * oi.Book.Price
+                UnitPrice: oi.UnitPrice
                 )).ToList()
         );
     }

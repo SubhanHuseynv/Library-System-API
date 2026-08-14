@@ -5,7 +5,7 @@ namespace LibrarySystem.Application.Interfaces.Repositories.Generic;
 public interface IRepository<T>
 {
     Task<IReadOnlyList<T>> GetAllAsync(
-        Expression<Func<T, bool>>? filter = null,
+        List<Expression<Func<T, bool>>>? filters = null,
         Expression<Func<T, object>>? sort = null,
         int page = 0,
         int take = 0,

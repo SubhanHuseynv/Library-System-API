@@ -18,7 +18,7 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity, new()
     }
 
     public async Task<IReadOnlyList<T>> GetAllAsync(
-        Expression<Func<T, bool>>? filter = null,
+        List<Expression<Func<T, bool>>>? filters = null,
         Expression<Func<T, object>>? sort = null,
         int page = 0,
         int take = 0,
@@ -27,9 +27,12 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity, new()
     {
         IQueryable<T> query = _dbset.AsNoTracking();
 
-        if (filter is not null )
+        if (filters is not null )
         {
-            query = query.Where(filter);
+            foreach (var filter in filters)
+            {
+                query = query.Where(filter);
+            }
         }
 
         if (sort is not null)

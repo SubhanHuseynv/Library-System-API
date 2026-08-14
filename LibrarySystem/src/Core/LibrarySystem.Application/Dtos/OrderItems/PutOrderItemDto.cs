@@ -2,6 +2,5 @@
 
 public record PutOrderItemDto
 (
-    int BookId,
     int Quantity
     );
