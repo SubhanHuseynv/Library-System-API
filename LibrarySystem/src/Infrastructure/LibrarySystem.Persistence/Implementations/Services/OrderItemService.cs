@@ -6,7 +6,7 @@ using LibrarySystem.Domain.Entities;
 
 namespace LibrarySystem.Persistence.Implementations.Services;
 
-internal class OrderItemService : IOrderItemService
+public class OrderItemService : IOrderItemService
 {
     private readonly IOrderItemRepository _repository;
     private readonly IBookRepository _bookRepository;
