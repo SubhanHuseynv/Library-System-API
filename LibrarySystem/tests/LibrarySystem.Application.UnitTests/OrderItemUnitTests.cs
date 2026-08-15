@@ -1,11 +1,8 @@
 ﻿using LibrarySystem.Application.Dtos.OrderItems;
 using LibrarySystem.Application.Exceptions;
 using LibrarySystem.Application.Interfaces.Repositories;
-using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
-using LibrarySystem.Persistence.Context;
 using LibrarySystem.Persistence.Implementations.Services;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace LibrarySystem.Application.UnitTests;

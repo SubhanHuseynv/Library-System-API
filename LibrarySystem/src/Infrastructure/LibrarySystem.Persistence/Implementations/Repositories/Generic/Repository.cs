@@ -65,6 +65,11 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity, new()
         return await query.FirstOrDefaultAsync(t => t.Id == id);
     }
 
+    public async Task<int> GetValuesCountAsync()
+    {
+        return await _dbset.CountAsync();
+    }
+
     public void Add(T entity)
     {
         _dbset.Add(entity);

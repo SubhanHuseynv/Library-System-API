@@ -12,6 +12,7 @@ public interface IRepository<T>
         bool isDesc = false,
         params string[] includes);
     Task<T?> GetByIdAsync(long id, params string[] includes);
+    Task<int> GetValuesCountAsync();
     void Add(T entity);
     void Update(T entity);
     void Delete(T entity);
