@@ -61,6 +61,8 @@ internal class Program
             await app.UseInitializeDbContext(scope);
         }
 
+        app.UseHangfire();
+
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
         app.UseHttpsRedirection();

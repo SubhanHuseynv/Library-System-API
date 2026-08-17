@@ -1,5 +1,6 @@
 ﻿using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Infrastructure.Implementations.Services;
+using LibrarySystem.Infrastructure.Options;
 using LibrarySystem.Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +42,8 @@ namespace LibrarySystem.Infrastructure
             services.AddScoped<ICloudinarySettings>(sp =>
             sp.GetRequiredService<IOptions<CloudinarySettings>>().Value
             );
+
+            services.Configure<RedisCacheSettings>(configuration.GetSection("RedisCacheSettings"));
 
             return services;
         }
