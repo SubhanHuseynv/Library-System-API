@@ -14,5 +14,7 @@ namespace LibrarySystem.Domain.Entities
         public long AuthorId { get; set; }
         public Author Author { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
+        public string? PublicId { get; set; }
+        public string? SecureUrl { get; set; }
     }
 }

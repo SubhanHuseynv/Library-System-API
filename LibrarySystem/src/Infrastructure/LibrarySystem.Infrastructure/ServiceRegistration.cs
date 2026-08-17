@@ -1,8 +1,10 @@
 ﻿using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Infrastructure.Implementations.Services;
+using LibrarySystem.Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -13,6 +15,7 @@ namespace LibrarySystem.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ITokenHandlerService, TokenHandlerService>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();    
 
             services.AddAuthentication(opt =>
             {
@@ -34,6 +37,9 @@ namespace LibrarySystem.Infrastructure
 
                });
 
+            services.Configure<ICloudinarySettings>(configuration.GetSection("CloudinarySettings"));
+            services.AddScoped<ICloudinarySettings>(sp =>
+            sp.GetRequiredService<IOptions<CloudinarySettings>>().Value);
             return services;
         }
     }
