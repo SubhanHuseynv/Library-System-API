@@ -4,7 +4,6 @@ using LibrarySystem.Application.Dtos.File;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Infrastructure.Settings;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LibrarySystem.Infrastructure.Implementations.Services;
 

@@ -12,4 +12,6 @@ public interface IBookService
     Task PostBook(PostBookDto bookDto);
     Task PutBook(long id, PutBookDto bookDto);
     Task DeleteBook(long id);
+    Task UploadImage(long id, UploadImageInBookDto uploadDto);
+    Task<GetImageInBookDto> GetImage(long id);
 }

@@ -36,6 +36,8 @@ namespace LibrarySystem.API.Middlewares
                 ConflictException => (int)HttpStatusCode.Conflict,
                 UnauthorizedException => (int)HttpStatusCode.Unauthorized,
                 ForbiddenException => (int)HttpStatusCode.Forbidden,
+                UnsupportedFileTypeException => (int)HttpStatusCode.UnsupportedMediaType,
+                FileTooLargeException => StatusCodes.Status413PayloadTooLarge,
                 _ => (int)HttpStatusCode.InternalServerError,
             };
 
