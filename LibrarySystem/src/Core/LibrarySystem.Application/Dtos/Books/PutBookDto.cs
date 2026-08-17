@@ -1,4 +1,6 @@
-﻿namespace LibrarySystem.Application.Dtos.Books;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace LibrarySystem.Application.Dtos.Books;
 
 public record PutBookDto
 (

@@ -48,4 +48,18 @@ public class BooksController : ControllerBase
         await _service.DeleteBook(id);
         return NoContent();
     }
+
+    [HttpPut("{id}/uploadImage")]
+    public async Task<IActionResult> UploadImage(long id,[FromForm]UploadImageInBookDto uploadImage)
+    {
+        await _service.UploadImage(id,uploadImage);
+        return NoContent();
+    }
+
+    [HttpGet("{id}/getImage")]
+    public async Task<IActionResult> GetImage(long id)
+    {
+        return Ok(await _service.GetImage(id));
+        
+    }
 }

@@ -37,9 +37,11 @@ namespace LibrarySystem.Infrastructure
 
                });
 
-            services.Configure<ICloudinarySettings>(configuration.GetSection("CloudinarySettings"));
+            services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
             services.AddScoped<ICloudinarySettings>(sp =>
-            sp.GetRequiredService<IOptions<CloudinarySettings>>().Value);
+            sp.GetRequiredService<IOptions<CloudinarySettings>>().Value
+            );
+
             return services;
         }
     }

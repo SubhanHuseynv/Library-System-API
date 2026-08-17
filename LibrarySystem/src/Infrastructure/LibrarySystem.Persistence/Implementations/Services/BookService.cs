@@ -8,6 +8,9 @@ using System.Linq.Expressions;
 using LibrarySystem.Application.Common;
 using LibrarySystem.Application.Dtos.Categories;
 using LibrarySystem.Application.Queries;
+using LibrarySystem.Persistence.Utilities.Validators;
+using LibrarySystem.Persistence.Utilities.Enums;
+using LibrarySystem.Application.Dtos.File;
 
 namespace LibrarySystem.Persistence.Implementations.Services;
 
@@ -16,13 +19,16 @@ internal class BookService : IBookService
     private readonly IBookRepository _repository;
     private readonly IAuthorRepository _authorRepository;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly ICloudinaryService _cloudinaryService;
     public BookService(IBookRepository repository,
         IAuthorRepository authorRepository,
-        ICategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository,
+        ICloudinaryService cloudinaryService)
     {
         _repository = repository;
         _authorRepository = authorRepository;
         _categoryRepository = categoryRepository;
+        _cloudinaryService = cloudinaryService;
     }
 
     public async Task<IReadOnlyList<GetAllBookDto>> GetAllBooks(
@@ -34,7 +40,7 @@ internal class BookService : IBookService
         {
             chosenFilter.Add(i => i.Name.Contains(query.Filter));
         }
-        if(query.MinPrice > 0)
+        if (query.MinPrice > 0)
         {
             chosenFilter.Add(i => i.Price >= query.MinPrice);
         }
@@ -141,7 +147,7 @@ internal class BookService : IBookService
 
     public async Task PutBook(long id, PutBookDto bookDto)
     {
-        Book? book = await _repository.GetByIdAsync(id,"BookCategories.Category");
+        Book? book = await _repository.GetByIdAsync(id, "BookCategories.Category");
         if (book is null) throw new NotFoundException("Entity not found");
 
         bool resultName = await _repository.AnyAsync(b => b.Name == bookDto.Name && book.Name != bookDto.Name);
@@ -156,7 +162,7 @@ internal class BookService : IBookService
             b => b.BookCategories.Any(bc => distinctCategoryIds.Contains(bc.CategoryId))
         };
         var existedCIds = await _categoryRepository.GetAllAsync(filters: filters);
-        if(existedCIds.Count != distinctCategoryIds.Count) throw new NotFoundException("CategoryIds not found");
+        if (existedCIds.Count != distinctCategoryIds.Count) throw new NotFoundException("CategoryIds not found");
 
 
         book.Name = bookDto.Name;
@@ -169,13 +175,13 @@ internal class BookService : IBookService
         //Ama en duzgunu db-da olmayanlari silim, dto da olmayanlari elave edim
 
         var removedCategories = book.BookCategories.Where(bc => !distinctCategoryIds.Contains(bc.CategoryId)).ToList();
-        foreach(var rmc in removedCategories)
+        foreach (var rmc in removedCategories)
         {
             book.BookCategories.Remove(rmc);
         }
 
         var addedCategories = distinctCategoryIds.Where(ci => !book.BookCategories.Any(bc => bc.CategoryId == ci)).ToList();
-        if(addedCategories is not null)
+        if (addedCategories is not null)
         {
             addedCategories.Select(ac => new BookCategory()
             {
@@ -183,7 +189,7 @@ internal class BookService : IBookService
                 BookId = book.Id
             });
         }
-      
+
 
         _repository.Update(book);
         await _repository.SaveChangesAsync();
@@ -194,7 +200,40 @@ internal class BookService : IBookService
         Book? book = await _repository.GetByIdAsync(id);
         if (book is null) throw new NotFoundException("Entity not found");
 
+        if (!string.IsNullOrEmpty(book.PublicId))
+            await _cloudinaryService.DeleteImageAsync(book.PublicId);
+
         _repository.Delete(book);
         await _repository.SaveChangesAsync();
+    }
+
+    public async Task UploadImage(long id, UploadImageInBookDto uploadDto)
+    {
+        Book? book = await _repository.GetByIdAsync(id);
+        if (book is null) throw new NotFoundException("Book id not found");
+
+        if (!uploadDto.image.FileTypeValidator("image"))
+            throw new UnsupportedFileTypeException("Type is invalid");
+
+        if (!uploadDto.image.FileSizeValidator(3, SizeType.MB))
+            throw new FileTooLargeException("Size is invalid");
+
+        if (!string.IsNullOrEmpty(book.PublicId))
+            await _cloudinaryService.DeleteImageAsync(book.PublicId);
+
+        UploadImageDto imageDto = await _cloudinaryService.ImageUploadAsync(uploadDto.image);
+        book.PublicId = imageDto.PublicId;
+        book.SecureUrl = imageDto.SecureUrl;
+
+        _repository.Update(book);
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task<GetImageInBookDto> GetImage(long id)
+    {
+        Book? book = await _repository.GetByIdAsync(id);
+        if (book is null) throw new NotFoundException("Book not found");
+
+        return new(book.SecureUrl);
     }
 }
