@@ -1,4 +1,5 @@
-﻿using LibrarySystem.Application.Interfaces.Repositories;
+﻿using Hangfire;
+using LibrarySystem.Application.Interfaces.Repositories;
 using LibrarySystem.Application.Interfaces.Services;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Persistence.Context;
@@ -49,6 +50,11 @@ public static class ServiceRegistration
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<ICustomerService, CustomerService>();
 
+        services.AddScoped<IBackgroundCleanupService, BackgroundCleanupService>();
+
+        services.AddHangfire(opt => opt.UseSqlServerStorage(configuration.GetConnectionString("default")));
+        services.AddHangfireServer();
+
         return services;
     }
 
@@ -58,6 +64,21 @@ public static class ServiceRegistration
         await initialize.InitializeDb();
         await initialize.InitializeRoles();
         await initialize.InitializeAdmin();
+
+        return app;
+    }
+
+    public static IApplicationBuilder UseHangfire(this IApplicationBuilder app)
+    {
+        app.UseHangfireDashboard("/hangfire", options:
+            new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAdminAuthorization() }
+            });
+        RecurringJob.AddOrUpdate<IBackgroundCleanupService>(
+    "delete-daily-orders",
+    service => service.CleanupOrders(),
+    Cron.Daily);
 
         return app;
     }
